@@ -5,7 +5,7 @@ const io = require('socket.io')(http);
 
 const state = {
   isRunning: false,
-  countdown: 3,
+  countdown: 4,
   timer: null,
   winner: null,
   points: {
@@ -112,6 +112,8 @@ function initBallPosition() {
   state.ball.x = state.canvas.width / 2 - state.ball.radius;
   state.ball.y = state.canvas.height / 2 - state.ball.radius;
   state.ball.speed = 7;
+  state.ball.vx = 5;
+  state.ball.vy = 5;
 }
 
 function arbitrator() {
@@ -119,13 +121,15 @@ function arbitrator() {
     state.points.player1 += 1;
     state.isRunning = false;
     initBallPosition();
-    state.countdown = 3;
+    state.countdown = 4;
+    state.timer = null;
     return;
   } else if (state.ball.x + state.ball.radius < 0) {
     state.points.player2 += 1;
     state.isRunning = false;
     initBallPosition();
-    state.countdown = 3;
+    state.countdown = 4;
+    state.timer = null;
     return;
   }
 }
@@ -159,6 +163,13 @@ function calculPlayersPosition() {
   }
 }
 
+function countdown() {
+  if (state.countdown > 0) {
+    state.countdown -= 1;
+    setTimeout(countdown, 1000);
+  }
+}
+
 function roundProcess() {
   if (state.points.player1 > 2 || state.points.player2 > 2) {
     state.winner =
@@ -166,9 +177,9 @@ function roundProcess() {
     state.isRunning = false;
     return;
   }
-  if (!state.isRunning && state.countdown > 0) {
-    state.countdown -= 1;
-    console.log(state.countdown);
+  if (!state.isRunning && !state.timer) {
+    state.timer = true;
+    countdown();
   } else if (!state.isRunning && state.countdown <= 0) {
     state.isRunning = true;
   } else if (state.isRunning && state.countdown <= 0) {

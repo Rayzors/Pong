@@ -1,7 +1,21 @@
 const express = require('express');
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const https = require('https');
+const server = https.createServer(
+  {
+    key: fs.readFileSync(
+      '/etc/letsencrypt/live/pong.kevinmanssat.fr/privkey.pem'
+    ),
+    cert: fs.readFileSync(
+      '/etc/letsencrypt/live/pong.kevinmanssat.fr/cert.pem'
+    ),
+    ca: fs.readFileSync('/etc/letsencrypt/live/pong.kevinmanssat.fr/chain.pem'),
+    requestCert: false,
+    rejectUnauthorized: false,
+  },
+  app
+);
+const io = require('socket.io')(https);
 
 const state = {
   isRunning: false,
@@ -80,7 +94,7 @@ io.on('connection', function(socket) {
   }, 1000 / 60);
 });
 
-http.listen(3000, function() {
+server.listen(3000, function() {
   console.log('listening on *:3000');
 });
 

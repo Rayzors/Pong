@@ -16,7 +16,7 @@ const server = https.createServer(
   },
   app
 );
-const io = require('socket.io')(https);
+const io = require('socket.io')(server);
 
 const state = {
   isRunning: false,

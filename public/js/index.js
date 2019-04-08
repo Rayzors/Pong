@@ -121,6 +121,24 @@ class Canvas {
     );
   }
 
+  drawPoints(player) {
+    let txt = `${this.points[player]}`;
+    this.ctx.font = '100px sans-serif';
+    if (player === 'player1') {
+      this.ctx.fillText(
+        txt,
+        this.$el.width / 4 - this.ctx.measureText(txt).width / 2,
+        100
+      );
+    } else if (player === 'player2') {
+      this.ctx.fillText(
+        txt,
+        (this.$el.width / 4) * 3 - this.ctx.measureText(txt).width / 2,
+        100
+      );
+    }
+  }
+
   resize() {
     this.$el.width = window.innerWidth;
     this.$el.height = window.innerHeight;
@@ -130,7 +148,8 @@ class Canvas {
   animate() {
     requestAnimationFrame(() => this.animate());
     this.ctx.clearRect(0, 0, innerWidth, innerHeight);
-
+    this.drawPoints('player1');
+    this.drawPoints('player2');
     this.subscriber.forEach((sub) => sub.draw());
     if (this.players.length > 1 && this.countdown > 0) {
       this.drawCountdown();
